@@ -30,15 +30,13 @@ public class Deck{
     }
 
     public Card drawCard() {
-        Card drawn = cards.get();
-        return drawn;
+        if (cards.size() == 0) {
+            return null;
+        }
+        return cards.remove(0);
     }
 
     public boolean isEmpty(){
         return cards.isEmpty();
     }
-
-   
-
-
 }
