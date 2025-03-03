@@ -8,8 +8,9 @@ public class Player {
     String[] suits  = Utility.getSuits();
     String[] ranks = Utility.getRanks();
     
-    public Player(){
+    public Player() {
         hand = new ArrayList<>();
+        allCards = new ArrayList<Card>();
     }
 
     public ArrayList<Card> getHand() {return hand;}
@@ -30,7 +31,25 @@ public class Player {
     }
 
     public void sortAllCards() {
-        
+        int indexOne = 0;
+        int indexTwo = 1;
+        for (int i = 1; i < allCards.size(); i++) {
+            int originalOne = indexOne;
+            int originalTwo = indexTwo;
+            while (Utility.getRankValue(allCards.get(indexTwo).getRank()) < Utility.getRankValue(allCards.get(indexOne).getRank())) {
+                Card swap = allCards.get(indexTwo);
+                allCards.set(indexTwo, allCards.get(indexOne));
+                allCards.set(indexOne, swap);
+                if (indexTwo > 0) {
+                    indexTwo--;
+                }
+                if (indexOne > 0) {
+                    indexOne--;
+                }
+            }
+            indexOne = originalOne + 1;
+            indexTwo = originalTwo + 1;
+        }
     } 
 
     public ArrayList<Integer> findRankingFrequency() {
@@ -70,11 +89,11 @@ public class Player {
     }
 
     public boolean isPair() {
+        ArrayList<Integer> frequency = new ArrayList<Integer>();
+        frequency = findRankingFrequency();
         for (int i = 0; i < allCards.size(); i++) {
-            for (int j = 1; j < allCards.size(); j++) {
-                if (allCards.get(i) == allCards.get(j)) {
-                    return true;
-                }
+            if (frequency.get(i) == 2) {
+                return true;
             }
         }
         return false;
@@ -83,8 +102,8 @@ public class Player {
     public boolean isTwoPair() {
         int numPairs = 0;
         for (int i = 0; i < allCards.size(); i++) {
-            for (int j = 1; j < allCards.size(); j++) {
-                if (allCards.get(i) == allCards.get(j)) {
+            for (int j = i + 1; j < allCards.size(); j++) {
+                if (Utility.getRankValue(allCards.get(i).getRank()) == Utility.getRankValue(allCards.get(j).getRank())) {
                     numPairs++;
                 }
             }
@@ -96,33 +115,79 @@ public class Player {
     }
 
     public boolean isThreeOfAKind() {
-        int numRepetitions = 0;
-        int maxReps = 0;
+        ArrayList<Integer> frequency = new ArrayList<Integer>();
+        frequency = findRankingFrequency();
         for (int i = 0; i < allCards.size(); i++) {
-            for (int j = 1; j < allCards.size(); j++) {
-                if (allCards.get(i) == allCards.get(j)) {
-                    numRepetitions++;
-                }
+            if (frequency.get(i) == 3) {
+                return true;
             }
-            if (numRepetitions > maxReps) {
-                maxReps = numRepetitions;
-            }
-            numRepetitions = 0;
-        }
-        if (maxReps == 3) {
-            return true;
         }
         return false;
     }
 
     public boolean isStraight() {
         sortAllCards();
-        
+        int times = 0;
+        for (int i = 0; i < allCards.size() - 1; i++) {
+            if (Utility.getRankValue(allCards.get(i + 1).getRank()) == (Utility.getRankValue(allCards.get(i).getRank()) + 1)) {
+                times++;
+            } else {
+                return false;
+            }
+        }
         return true;
     }
 
-    
+    public boolean isFlush() {
+        ArrayList<Integer> frequency = new ArrayList<Integer>();
+        frequency = findSuitFrequency();
+        for (int i = 0; i < allCards.size(); i++) {
+            if (frequency.get(i) == 5) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public boolean isFullHouse() {
+        ArrayList<Integer> frequency = new ArrayList<Integer>();
+        boolean threeRank = false;
+        boolean twoRank = false;
+        frequency = findRankingFrequency();
+        for (int i = 0; i < allCards.size(); i++) {
+            if (frequency.get(i) == 3) {
+                threeRank = true;
+            }
+            if (frequency.get(i) == 2) {
+                twoRank = true;
+            }
+        }
+        if (threeRank && twoRank) {
+            return true;
+        }
+        return false;
+    }
 
+    public boolean isQuads() {
+        ArrayList<Integer> frequency = new ArrayList<Integer>();
+        frequency = findRankingFrequency();
+        for (int i = 0; i < allCards.size(); i++) {
+            if (frequency.get(i) == 4) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public boolean isStraightFlush() {
+        if (isStraight() && isFlush()) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isRoyalFlush() {
+        boolean is
+        return true;
+    }
 }
